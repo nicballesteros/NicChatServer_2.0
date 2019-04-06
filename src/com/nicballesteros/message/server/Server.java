@@ -497,7 +497,7 @@ public class Server implements Runnable{
             }
         }
         else if(dataType == (byte)105 && currentClient.getIsConnected()){ //data is a request for history of a certain acquaintance
-            //sendMessageHistory(currentClient);
+            //sendMessageHistory(currentClient);/
         }
         else if(dataType == (byte)106 && currentClient.getIsConnected()){ //data is a request for the a list of acquainted clients
             sendAcquaintedClients(currentClient);
