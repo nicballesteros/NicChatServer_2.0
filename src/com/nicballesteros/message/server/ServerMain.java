@@ -1,4 +1,4 @@
-package com.nicballesteros.server.one;
+package com.nicballesteros.message.server;
 
 import org.apache.commons.codec.binary.Base64;
 

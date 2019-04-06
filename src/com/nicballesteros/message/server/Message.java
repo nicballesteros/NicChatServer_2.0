@@ -1,4 +1,4 @@
-package com.nicballesteros.server.one;
+package com.nicballesteros.message.server;
 
 public class Message {
     private String message;

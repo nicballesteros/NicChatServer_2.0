@@ -1,4 +1,4 @@
-package com.nicballesteros.server.one;
+package com.nicballesteros.message.server;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;

@@ -1,4 +1,4 @@
-package com.nicballesteros.server.one;
+package com.nicballesteros.message.server;
 
 import javax.crypto.Cipher;
 import java.io.ByteArrayOutputStream;
@@ -497,7 +497,7 @@ public class Server implements Runnable{
             }
         }
         else if(dataType == (byte)105 && currentClient.getIsConnected()){ //data is a request for history of a certain acquaintance
-            sendMessageHistory(currentClient);
+            //sendMessageHistory(currentClient);
         }
         else if(dataType == (byte)106 && currentClient.getIsConnected()){ //data is a request for the a list of acquainted clients
             sendAcquaintedClients(currentClient);
@@ -838,25 +838,25 @@ public class Server implements Runnable{
         return messages;
     }
 
-    private void sendMessageHistory(ServerClient client){
-        byte[] byteArray = ByteBuffer.allocate(4).putInt(88).array();
-        byte[] idToByteArray = ByteBuffer.allocate(4).putInt(id).array();
-        ByteArrayOutputStream firstOut = new ByteArrayOutputStream();
-
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        try{
-            firstOut.write(byteArray);
-            firstOut.write(idToByteArray);
-            firstOut.write(name.getBytes());
-
-            output.write((byte)101);
-            output.write(client.encryptByteAES(firstOut.toByteArray()));
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-
-        send(output.toByteArray(), client.getAddress(), client.getPort());
-    }
+//    private void sendMessageHistory(ServerClient client){
+//        byte[] byteArray = ByteBuffer.allocate(4).putInt(88).array();
+//        byte[] idToByteArray = ByteBuffer.allocate(4).putInt(id).array();
+//        ByteArrayOutputStream firstOut = new ByteArrayOutputStream();
+//
+//        ByteArrayOutputStream output = new ByteArrayOutputStream();
+//        try{
+//            firstOut.write(byteArray);
+//            firstOut.write(idToByteArray);
+//            firstOut.write(name.getBytes());
+//
+//            output.write((byte)101);
+//            output.write(client.encryptByteAES(firstOut.toByteArray()));
+//        }
+//        catch (Exception e){
+//            e.printStackTrace();
+//        }
+//
+//        send(output.toByteArray(), client.getAddress(), client.getPort());
+//    }
 }
 
