@@ -489,22 +489,23 @@ public class Server implements Runnable{
         }
         else if(dataType == (byte)104 && currentClient.getIsConnected()){ //data is a message
             //if has recipient
-            if(currentClient.getRecipient() != -1 && currentClient.getRecipient() != currentClient.getID() && clients.get(currentClient.getRecipient() - 1).getIsConnected()){
-                ServerClient recipient = clients.get(currentClient.getRecipient() - 1);
+            ServerClient recipient = clients.get(currentClient.getRecipient() - 1);
 
+            if(currentClient.getRecipient() != -1 && currentClient.getRecipient() != currentClient.getID() && clients.get(currentClient.getRecipient() - 1).getIsConnected()){
                 sendSenderNameToUser(recipient, currentClient);
-                sendToUser(in, recipient, currentClient);
+                sendToUser(in, recipient);
             }
+            saveMessageToDatabase(new String(in), currentClient.getID(), recipient.getID());
         }
-        else if(dataType == (byte)105 && currentClient.getIsConnected()){ //data is a request for history of a certain acquaintance
-            //sendMessageHistory(currentClient);/
+        else if(dataType == (byte)105 && currentClient.getIsConnected()){ //data is a request for all the history of the client
+            sendMessageHistory(currentClient);
         }
         else if(dataType == (byte)106 && currentClient.getIsConnected()){ //data is a request for the a list of acquainted clients
             sendAcquaintedClients(currentClient);
-            System.out.println("Requesting acquai");
+            //System.out.println("Requesting acquai");
         }
         else if(dataType == (byte)107 && currentClient.getIsConnected()){
-            sendConfirmationCode(6789, currentClient);
+            sendConfirmationCode(6789, currentClient); //is the client connected
         }
         else if(dataType == (byte)108 && currentClient.getIsConnected()){ //Disconnect the user
             System.out.println(currentClient.getName() + " disconnected");
@@ -645,7 +646,7 @@ public class Server implements Runnable{
         send.start();
     }
 
-    private void sendToUser(byte[] message, ServerClient recipient, ServerClient from){
+    private void sendToUser(byte[] message, ServerClient recipient){
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         ByteArrayOutputStream firstOut = new ByteArrayOutputStream();
 
@@ -789,8 +790,8 @@ public class Server implements Runnable{
     }
 
     private void sendID(int id, String name, ServerClient client){
-        byte[] byteArray = ByteBuffer.allocate(4).putInt(999).array(); //12345 is the confirmation code telling the user that it has received the AES key
-        byte[] idToByteArray = ByteBuffer.allocate(4).putInt(id).array(); //12345 is the confirmation code telling the user that it has received the AES key
+        byte[] byteArray = ByteBuffer.allocate(4).putInt(999).array();
+        byte[] idToByteArray = ByteBuffer.allocate(4).putInt(id).array();
         ByteArrayOutputStream firstOut = new ByteArrayOutputStream();
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -838,25 +839,55 @@ public class Server implements Runnable{
         return messages;
     }
 
-//    private void sendMessageHistory(ServerClient client){
-//        byte[] byteArray = ByteBuffer.allocate(4).putInt(88).array();
-//        byte[] idToByteArray = ByteBuffer.allocate(4).putInt(id).array();
-//        ByteArrayOutputStream firstOut = new ByteArrayOutputStream();
-//
-//        ByteArrayOutputStream output = new ByteArrayOutputStream();
-//        try{
-//            firstOut.write(byteArray);
-//            firstOut.write(idToByteArray);
-//            firstOut.write(name.getBytes());
-//
-//            output.write((byte)101);
-//            output.write(client.encryptByteAES(firstOut.toByteArray()));
-//        }
-//        catch (Exception e){
-//            e.printStackTrace();
-//        }
-//
-//        send(output.toByteArray(), client.getAddress(), client.getPort());
-//    }
+    private void sendMessageHistory(ServerClient client){
+        byte[] byteArray = ByteBuffer.allocate(4).putInt(88).array();
+        //get the history
+        List<Message> history = new ArrayList<>();
+        history = getMessageHistory(client);
+        //TODO sort by date
+
+        for(Message message : history){
+            byte[] fromidByteArray = ByteBuffer.allocate(4).putInt(message.getFrom()).array();
+            byte[] toidByteArray = ByteBuffer.allocate(4).putInt(message.getTo()).array();
+            ByteArrayOutputStream firstOut = new ByteArrayOutputStream();
+
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
+            try{
+                firstOut.write(byteArray);
+                firstOut.write(fromidByteArray);
+                firstOut.write(toidByteArray);
+                firstOut.write(message.getMessage().getBytes());
+
+                output.write((byte)101);
+                output.write(client.encryptByteAES(firstOut.toByteArray()));
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+
+            send(output.toByteArray(), client.getAddress(), client.getPort());
+        }
+    }
+
+    private void saveMessageToDatabase(String message, int from, int to){
+        String url = "jdbc:mysql://localhost:3306/clients?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC";
+        String mysqlUsername = "javaserver";
+        String mysqlPassword = "u4tOEoxL";
+
+        try{
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection conn = DriverManager.getConnection(url, mysqlUsername, mysqlPassword);
+            System.out.println("Connected to clients database successfully");
+
+            Statement stmt = conn.createStatement();
+
+            String sql = "INSERT INTO messages VALUES (" + from + "," + to + ",\"" + message + "\");";
+            System.out.println(sql);
+            stmt.executeUpdate(sql);
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+    }
 }
 
