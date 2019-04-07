@@ -28,7 +28,7 @@ public class ServerMain {
         }
         catch (Exception e){
             e.printStackTrace();
-            System.out.println("NextID is gonna be jacked up");
+            System.out.println("There was an error. Restart Server");
         }
 
         //testEncryption();
@@ -38,7 +38,7 @@ public class ServerMain {
 
     public static void main(String[] args) {
         if(args.length > 1){
-            System.out.print("Usage: java -jar ServerMain.jar [port]");
+            System.out.println("Usage: java -jar ServerMain.jar [port]");
         }
         else{
             int port = Integer.parseInt(args[0]);
@@ -67,7 +67,7 @@ public class ServerMain {
             clients.add(c);
             ++rowCount;
         }
-        System.out.println("rows: " + rowCount);
+        //System.out.println("rows: " + rowCount);
         loadAcquaintances();
         return rowCount + 1;
     }
@@ -81,7 +81,7 @@ public class ServerMain {
             try{
                 Class.forName("com.mysql.cj.jdbc.Driver");
                 Connection conn = DriverManager.getConnection(url, mysqlUsername, mysqlPassword);
-                System.out.println("Connected to clients database successfully");
+                //System.out.println("Connected to clients database successfully");
 
                 Statement stmt = conn.createStatement();
 
@@ -97,7 +97,7 @@ public class ServerMain {
                 e.printStackTrace();
             }
         }
-        System.out.println("Loaded acquaintances");
+        //System.out.println("Loaded acquaintances");
 
     }
 

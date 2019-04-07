@@ -96,21 +96,6 @@ public class Server implements Runnable{
         client.disconnectClient();
     }
 
-//    private void saveMessageToDatabase(String msg, ServerClient from, ServerClient to){
-//        try(Connection conn = DriverManager.getConnection(
-//                "jdbc:mysql://localhost:3306/clients?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC",
-//                "javaserver",
-//                "u4tOEoxL");
-//            Statement stmt = conn.createStatement()){
-//            String strSelect = "insert into messages values (" + from.getID() + "," + to.getID() + "," + msg + ")";
-//
-//            stmt.executeUpdate(strSelect);
-//        }
-//        catch(Exception e){
-//            e.printStackTrace();
-//        }
-//    }
-
     private void saveNewClientCredsToDatabase(int id, String username, String password){
         String url = "jdbc:mysql://localhost:3306/clients?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC";
         String mysqlUsername = "javaserver";
@@ -120,16 +105,16 @@ public class Server implements Runnable{
             Class.forName("com.mysql.cj.jdbc.Driver");
             //System.out.println("Connecting to clients database");
             Connection conn = DriverManager.getConnection(url, mysqlUsername, mysqlPassword);
-            System.out.println("Connected to clients database successfully");
+            //System.out.println("Connected to clients database successfully");
 
 
             //System.out.println("Inserting new user into username and password table");
             Statement stmt = conn.createStatement();
 
             String sql = "INSERT INTO clientuserandpass VALUES (" + id + ", '" + username + "', '" + password + "');";
-            System.out.println(sql);
+            //System.out.println(sql);
             stmt.executeUpdate(sql);
-            System.out.println("Inserted Data into table");
+            //System.out.println("Inserted Data into table");
         }
         catch(Exception e){
             e.printStackTrace();
@@ -145,7 +130,7 @@ public class Server implements Runnable{
             Class.forName("com.mysql.cj.jdbc.Driver");
             //System.out.println("Connecting to clients database");
             Connection conn = DriverManager.getConnection(url, mysqlUsername, mysqlPassword);
-            System.out.println("Connected to clients database successfully");
+            //System.out.println("Connected to clients database successfully");
 
 
             //System.out.println("Inserting new user into username and password table");
@@ -153,77 +138,12 @@ public class Server implements Runnable{
 
             String sql = "CREATE TABLE " + client.getName() + " (id int);";
             stmt.executeUpdate(sql);
-            System.out.println("table created");
+            //System.out.println("table created");
         }
         catch(Exception e){
             e.printStackTrace();
         }
     }
-
-//    private String getStoredHashedPassword(ServerClient client){
-//        String url = "jdbc:mysql://localhost:3306/clients?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC";
-//        String mysqlUsername = "javaserver";
-//        String mysqlPassword = "u4tOEoxL";
-//
-//        try {
-//            Class.forName("com.mysql.cj.jdbc.Driver");
-//            Connection conn = DriverManager.getConnection(url, "javaserver"/*"serveraccess"*/, "u4tOEoxL"/*"@mKkubjMYbc96RVMR"*/); //u4tOEoxL
-//            Statement stmt = conn.createStatement();
-//
-//            String strSelect = "select pass from clientuserandpass where id = " + client.getID() + ";";
-//
-//            ResultSet rset = stmt.executeQuery(strSelect);
-//
-//            if(rset.next()) {
-//                return rset.getString("pass");
-//            }
-//        }
-//        catch(Exception e){
-//            e.printStackTrace();
-//        }
-//        return null;
-//    }
-
-    //    private void loadOldMessagesFromDatabase(int from, int to){
-//        from = clients.get(from).getID();
-//        to = clients.get(to).getID();
-//
-//        String url = "jdbc:mysql://localhost:3306/clients?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC";
-//        String mysqlUsername = "javaserver";
-//        String mysqlPassword = "u4tOEoxL";
-//
-//        try{
-//            Connection conn = DriverManager.getConnection(url, mysqlUsername, mysqlPassword);
-//
-//            Statement stmt = conn.createStatement();
-//
-//            String sqlCommand = "select fromid, toid, message from messages";
-//
-//            ResultSet rset = stmt.executeQuery(sqlCommand);
-//
-//            List<Message> messagesInvolvingRecipientAndClient = new ArrayList<>();
-//
-//            int rowCount = 0;
-//            while(rset.next()){
-//                int fromid = rset.getInt("fromid");
-//                int toid = rset.getInt("toid");
-//                String msg = rset.getString("message");
-//
-//                if((fromid == from && toid == to) || (fromid == to && toid == from)){
-//                    messagesInvolvingRecipientAndClient.add(new Message(fromid, toid, msg));
-//                }
-//                ++rowCount;
-//            }
-//
-//            for(int i = 0; i < messagesInvolvingRecipientAndClient.size(); i++){
-//                send(messagesInvolvingRecipientAndClient.get(i).getMessage().getBytes(), clients.get(from).getAddress(), clients.get(from).getPort());
-//            }
-//        }
-//        catch(SQLException sql){
-//            sql.printStackTrace();
-//        }
-//
-//    }
 
     /*That's a tool that will help us later*/
     private void showByteDataOnConsole(byte[] data){
@@ -405,7 +325,7 @@ public class Server implements Runnable{
         }
         else if(dataType == (byte)101){ //if data is a password hash
             String password = Base64.encodeBase64String(in);
-            System.out.println("Password Hash");
+            //System.out.println("Password Hash");
             currentClient.setReceivedPassword(password);
             currentClient.setHashedPass(password);
         }
@@ -550,7 +470,7 @@ public class Server implements Runnable{
         try{
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection conn = DriverManager.getConnection(url, mysqlUsername, mysqlPassword);
-            System.out.println("Connected to clients database successfully");
+            //System.out.println("Connected to clients database successfully");
 
             Statement stmt = conn.createStatement();
 
@@ -558,7 +478,7 @@ public class Server implements Runnable{
 
             //System.out.println(sql);
             stmt.executeUpdate(sql);
-            System.out.println("Inserted Data into table");
+            //System.out.println("Inserted Data into table");
         }
         catch(Exception e){
             e.printStackTrace();
@@ -575,7 +495,7 @@ public class Server implements Runnable{
         try{
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection conn = DriverManager.getConnection(url, mysqlUsername, mysqlPassword);
-            System.out.println("Connected to clients database successfully");
+            //System.out.println("Connected to clients database successfully");
 
             Statement stmt = conn.createStatement();
 
@@ -730,7 +650,7 @@ public class Server implements Runnable{
         try{
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection conn = DriverManager.getConnection(url, mysqlUsername, mysqlPassword);
-            System.out.println("Connected to clients database successfully");
+            //System.out.println("Connected to clients database successfully");
 
             Statement stmt = conn.createStatement();
 
@@ -752,7 +672,7 @@ public class Server implements Runnable{
         List<Integer> aquaintances = client.getAcquainedClients();
 
         for(Integer acquaintance : aquaintances){
-            System.out.println(acquaintance);
+            //System.out.println(acquaintance);
             ByteArrayOutputStream arrayBuilder = new ByteArrayOutputStream();
             ByteArrayOutputStream arrayBuilderEncrypt = new ByteArrayOutputStream();
 
@@ -819,7 +739,7 @@ public class Server implements Runnable{
         try{
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection conn = DriverManager.getConnection(url, mysqlUsername, mysqlPassword);
-            System.out.println("Connected to clients database successfully");
+            //System.out.println("Connected to clients database successfully");
 
             Statement stmt = conn.createStatement();
 
@@ -877,12 +797,12 @@ public class Server implements Runnable{
         try{
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection conn = DriverManager.getConnection(url, mysqlUsername, mysqlPassword);
-            System.out.println("Connected to clients database successfully");
+            //System.out.println("Connected to clients database successfully");
 
             Statement stmt = conn.createStatement();
 
             String sql = "INSERT INTO messages VALUES (" + from + "," + to + ",\"" + message + "\");";
-            System.out.println(sql);
+            //System.out.println(sql);
             stmt.executeUpdate(sql);
         }
         catch(Exception e){
